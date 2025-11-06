@@ -12,6 +12,7 @@ export default function Home() {
   const [fileName, setFileName] = useState("");
   const [fullApiResponse, setFullApiResponse] = useState<ApiResponse["output_parsed"] | null>(null);
   const [isApproved, setIsApproved] = useState(false);
+  const [highlightText, setHighlightText] = useState<string | null>(null);
 
   const handleUploadSuccess = ({
     parsed,
@@ -27,6 +28,7 @@ export default function Home() {
     setFile(uploadedFile);
     setFullApiResponse(parsed);
     setIsApproved(false); // Reset approval status on new upload
+    setHighlightText(null); // Clear any highlights
   };
 
   return (
@@ -55,7 +57,7 @@ export default function Home() {
       <div className="flex-1 flex overflow-hidden">
         {/* Left Panel - Document Preview */}
         <div className="w-1/2 border-r border-gray-200">
-          <DocumentPreview file={file} />
+          <DocumentPreview file={file} highlightText={highlightText} />
         </div>
 
         {/* Right Panel - Review Interface */}
@@ -65,6 +67,7 @@ export default function Home() {
             onApprove={() => setIsApproved(true)}
             onReject={() => setIsApproved(false)}
             isApproved={isApproved}
+            onHighlightRequest={setHighlightText}
           />
         </div>
       </div>

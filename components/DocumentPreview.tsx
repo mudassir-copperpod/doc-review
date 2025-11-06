@@ -1,18 +1,20 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FileText, Loader2, ZoomIn, ZoomOut } from "lucide-react";
 import mammoth from "mammoth";
 
 interface DocumentPreviewProps {
   file: File | null;
+  highlightText?: string | null;
 }
 
-export default function DocumentPreview({ file }: DocumentPreviewProps) {
+export default function DocumentPreview({ file, highlightText }: DocumentPreviewProps) {
   const [htmlContent, setHtmlContent] = useState("");
   const [zoom, setZoom] = useState(100);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const convertDocument = async () => {
@@ -46,6 +48,76 @@ export default function DocumentPreview({ file }: DocumentPreviewProps) {
   const handleZoomOut = () => {
     setZoom((prev) => Math.max(50, prev - 25));
   };
+
+  // Handle text highlighting and scrolling
+  useEffect(() => {
+    if (!highlightText || !contentRef.current) return;
+
+    const container = contentRef.current;
+    
+    // Remove existing highlights
+    const existingHighlights = container.querySelectorAll('.auto-highlight');
+    existingHighlights.forEach(el => {
+      const parent = el.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(el.textContent || ''), el);
+        parent.normalize();
+      }
+    });
+
+    // Find and highlight the text
+    const walker = document.createTreeWalker(
+      container,
+      NodeFilter.SHOW_TEXT,
+      null
+    );
+
+    const nodesToHighlight: { node: Text; index: number; length: number }[] = [];
+    const searchText = highlightText.toLowerCase();
+    
+    let node: Text | null;
+    while ((node = walker.nextNode() as Text | null)) {
+      const text = node.textContent?.toLowerCase() || '';
+      const index = text.indexOf(searchText);
+      
+      if (index !== -1) {
+        nodesToHighlight.push({
+          node,
+          index,
+          length: highlightText.length
+        });
+      }
+    }
+
+    // Apply highlights
+    nodesToHighlight.forEach(({ node, index, length }) => {
+      const text = node.textContent || '';
+      const before = text.substring(0, index);
+      const match = text.substring(index, index + length);
+      const after = text.substring(index + length);
+
+      const fragment = document.createDocumentFragment();
+      
+      if (before) fragment.appendChild(document.createTextNode(before));
+      
+      const mark = document.createElement('mark');
+      mark.className = 'auto-highlight bg-yellow-300 px-1 rounded transition-all duration-300 ring-2 ring-yellow-400';
+      mark.textContent = match;
+      fragment.appendChild(mark);
+      
+      if (after) fragment.appendChild(document.createTextNode(after));
+
+      node.parentNode?.replaceChild(fragment, node);
+    });
+
+    // Scroll to first highlight
+    if (nodesToHighlight.length > 0) {
+      const firstHighlight = container.querySelector('.auto-highlight');
+      if (firstHighlight) {
+        firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+  }, [highlightText]);
 
   if (!file) {
     return (
@@ -119,6 +191,7 @@ export default function DocumentPreview({ file }: DocumentPreviewProps) {
           }}
         >
           <div
+            ref={contentRef}
             dangerouslySetInnerHTML={{ __html: htmlContent }}
             className="prose prose-sm max-w-none p-8 
               prose-headings:text-gray-900 prose-headings:font-bold

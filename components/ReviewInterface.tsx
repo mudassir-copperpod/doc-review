@@ -21,6 +21,7 @@ interface ReviewInterfaceProps {
   onApprove: () => void;
   onReject: () => void;
   isApproved: boolean;
+  onHighlightRequest?: (text: string | null) => void;
 }
 
 export default function ReviewInterface({
@@ -28,6 +29,7 @@ export default function ReviewInterface({
   onApprove,
   onReject,
   isApproved,
+  onHighlightRequest,
 }: ReviewInterfaceProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCompliance, setFilterCompliance] = useState<"all" | "Y" | "N">("all");
@@ -256,6 +258,7 @@ export default function ReviewInterface({
               searchTerm={searchTerm}
               isExpanded={expandedItems.has(item.field)}
               onToggle={() => toggleCard(item.field)}
+              onHighlightRequest={onHighlightRequest}
             />
           ))
         ) : (
