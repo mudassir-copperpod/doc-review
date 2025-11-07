@@ -104,13 +104,13 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `compliance-report-${Date.now()}.pdf`; // or .xlsx based on backend response
+      a.download = `compliance-report-${Date.now()}.xlsx`; // Excel file
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      alert("Report exported successfully!");
+      alert("Excel report exported successfully!");
     } catch (err) {
       console.error("Export error:", err);
       setError(err instanceof Error ? err.message : "Failed to export report");

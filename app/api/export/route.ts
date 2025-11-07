@@ -41,9 +41,9 @@ export async function POST(request: NextRequest) {
 
     // Forward the file blob from backend
     const blob = await response.blob();
-    const contentType = response.headers.get("content-type") || "application/pdf";
+    const contentType = response.headers.get("content-type") || "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     const contentDisposition = response.headers.get("content-disposition") || 
-      `attachment; filename="compliance-report-${Date.now()}.pdf"`;
+      `attachment; filename="compliance-report-${Date.now()}.xlsx"`;
 
     return new NextResponse(blob, {
       status: 200,

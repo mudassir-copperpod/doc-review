@@ -12,7 +12,7 @@ export default function Home() {
   const [fileName, setFileName] = useState("");
   const [fullApiResponse, setFullApiResponse] = useState<ApiResponse["output_parsed"] | null>(null);
   const [isApproved, setIsApproved] = useState(false);
-  const [highlightText, setHighlightText] = useState<string | null>(null);
+  const [highlightText, setHighlightText] = useState<string>("");
 
   const handleUploadSuccess = ({
     parsed,
@@ -28,7 +28,11 @@ export default function Home() {
     setFile(uploadedFile);
     setFullApiResponse(parsed);
     setIsApproved(false); // Reset approval status on new upload
-    setHighlightText(null); // Clear any highlights
+    setHighlightText(""); // Clear any highlights
+  };
+
+  const handleHighlightRequest = (text: string) => {
+    setHighlightText(text);
   };
 
   return (
@@ -67,7 +71,7 @@ export default function Home() {
             onApprove={() => setIsApproved(true)}
             onReject={() => setIsApproved(false)}
             isApproved={isApproved}
-            onHighlightRequest={setHighlightText}
+            onHighlightRequest={handleHighlightRequest}
           />
         </div>
       </div>

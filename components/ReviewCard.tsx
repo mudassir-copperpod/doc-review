@@ -11,7 +11,7 @@ interface ReviewCardProps {
   searchTerm: string;
   isExpanded: boolean;
   onToggle: () => void;
-  onHighlightRequest?: (text: string | null) => void;
+  onHighlightRequest: (text: string) => void;
 }
 
 export default function ReviewCard({ field, snippet, searchTerm, isExpanded, onToggle, onHighlightRequest }: ReviewCardProps) {
@@ -78,25 +78,18 @@ export default function ReviewCard({ field, snippet, searchTerm, isExpanded, onT
             <h4 className="text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
               <span className="w-1 h-4 bg-gray-500 rounded-full"></span>
               Extracted Content
-              {field.actual_content && onHighlightRequest && (
+              {field.actual_content && (
                 <button
-                  onClick={() => onHighlightRequest(snippet?.text || field.actual_content)}
-                  className="ml-auto text-xs px-2 py-1 rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors font-medium flex items-center gap-1"
+                  onClick={() => onHighlightRequest(field.actual_content)}
+                  className="ml-auto text-xs px-2 py-1 rounded-md bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-semibold transition-colors flex items-center gap-1 border border-yellow-300"
                   title="Highlight in document"
                 >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  Show in Doc
+                  <span>🔍</span>
+                  Find in Document
                 </button>
               )}
             </h4>
-            <div 
-              className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-800 leading-relaxed shadow-sm cursor-pointer hover:bg-gray-100 transition-colors"
-              onClick={() => field.actual_content && onHighlightRequest?.(snippet?.text || field.actual_content)}
-              title="Click to highlight in document"
-            >
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-800 leading-relaxed shadow-sm">
               {field.actual_content ? (
                 renderHighlightedText(field.actual_content)
               ) : (

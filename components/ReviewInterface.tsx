@@ -21,7 +21,7 @@ interface ReviewInterfaceProps {
   onApprove: () => void;
   onReject: () => void;
   isApproved: boolean;
-  onHighlightRequest?: (text: string | null) => void;
+  onHighlightRequest: (text: string) => void;
 }
 
 export default function ReviewInterface({
@@ -255,9 +255,9 @@ export default function ReviewInterface({
               key={item.field}
               field={item}
               snippet={getSnippet(item.field)}
-              searchTerm={searchTerm}
               isExpanded={expandedItems.has(item.field)}
               onToggle={() => toggleCard(item.field)}
+              searchTerm={searchTerm}
               onHighlightRequest={onHighlightRequest}
             />
           ))

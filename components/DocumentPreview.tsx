@@ -6,10 +6,10 @@ import mammoth from "mammoth";
 
 interface DocumentPreviewProps {
   file: File | null;
-  highlightText?: string | null;
+  highlightText?: string;
 }
 
-export default function DocumentPreview({ file, highlightText }: DocumentPreviewProps) {
+export default function DocumentPreview({ file, highlightText = "" }: DocumentPreviewProps) {
   const [htmlContent, setHtmlContent] = useState("");
   const [zoom, setZoom] = useState(100);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +55,7 @@ export default function DocumentPreview({ file, highlightText }: DocumentPreview
 
     const container = contentRef.current;
     
-    // Remove existing highlights
+    // Remove previous highlights
     const existingHighlights = container.querySelectorAll('.auto-highlight');
     existingHighlights.forEach(el => {
       const parent = el.parentNode;
@@ -72,52 +72,58 @@ export default function DocumentPreview({ file, highlightText }: DocumentPreview
       null
     );
 
-    const nodesToHighlight: { node: Text; index: number; length: number }[] = [];
-    const searchText = highlightText.toLowerCase();
-    
-    let node: Text | null;
-    while ((node = walker.nextNode() as Text | null)) {
-      const text = node.textContent?.toLowerCase() || '';
-      const index = text.indexOf(searchText);
-      
-      if (index !== -1) {
-        nodesToHighlight.push({
-          node,
-          index,
-          length: highlightText.length
-        });
-      }
+    const textNodes: Text[] = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      textNodes.push(node as Text);
     }
 
-    // Apply highlights
-    nodesToHighlight.forEach(({ node, index, length }) => {
-      const text = node.textContent || '';
-      const before = text.substring(0, index);
-      const match = text.substring(index, index + length);
-      const after = text.substring(index + length);
+    let firstMatch: HTMLElement | null = null;
 
-      const fragment = document.createDocumentFragment();
+    textNodes.forEach((textNode) => {
+      const text = textNode.textContent || '';
+      const lowerText = text.toLowerCase();
+      const lowerSearch = highlightText.toLowerCase();
       
-      if (before) fragment.appendChild(document.createTextNode(before));
-      
-      const mark = document.createElement('mark');
-      mark.className = 'auto-highlight bg-yellow-300 px-1 rounded transition-all duration-300 ring-2 ring-yellow-400';
-      mark.textContent = match;
-      fragment.appendChild(mark);
-      
-      if (after) fragment.appendChild(document.createTextNode(after));
+      if (lowerText.includes(lowerSearch)) {
+        const index = lowerText.indexOf(lowerSearch);
+        const before = text.substring(0, index);
+        const match = text.substring(index, index + highlightText.length);
+        const after = text.substring(index + highlightText.length);
 
-      node.parentNode?.replaceChild(fragment, node);
+        const fragment = document.createDocumentFragment();
+        
+        if (before) fragment.appendChild(document.createTextNode(before));
+        
+        const mark = document.createElement('mark');
+        mark.className = 'auto-highlight bg-yellow-300 px-1 rounded transition-all duration-300';
+        mark.textContent = match;
+        fragment.appendChild(mark);
+        
+        if (!firstMatch) firstMatch = mark;
+        
+        if (after) fragment.appendChild(document.createTextNode(after));
+
+        textNode.parentNode?.replaceChild(fragment, textNode);
+      }
     });
 
-    // Scroll to first highlight
-    if (nodesToHighlight.length > 0) {
-      const firstHighlight = container.querySelector('.auto-highlight');
-      if (firstHighlight) {
-        firstHighlight.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
+    // Scroll to first match
+    if (firstMatch) {
+      setTimeout(() => {
+        if (firstMatch) {
+          firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Add pulse animation
+          firstMatch.classList.add('animate-pulse');
+          setTimeout(() => {
+            if (firstMatch) {
+              firstMatch.classList.remove('animate-pulse');
+            }
+          }, 1500);
+        }
+      }, 100);
     }
-  }, [highlightText]);
+  }, [highlightText, htmlContent]);
 
   if (!file) {
     return (
@@ -181,7 +187,7 @@ export default function DocumentPreview({ file, highlightText }: DocumentPreview
       </div>
 
       {/* Document Content */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto p-6" id="document-scroll-container">
         <div
           className="mx-auto bg-white shadow-lg transition-all duration-200"
           style={{
