@@ -49,7 +49,7 @@ export default function DocumentPreview({ file, highlightText = "" }: DocumentPr
     setZoom((prev) => Math.max(50, prev - 25));
   };
 
-  // Handle text highlighting and scrolling
+  // Handle text highlighting and scrolling with fuzzy search
   useEffect(() => {
     if (!highlightText || !contentRef.current) return;
 
@@ -65,6 +65,18 @@ export default function DocumentPreview({ file, highlightText = "" }: DocumentPr
       }
     });
 
+    // Normalize text for better matching
+    const normalizeText = (str: string) => {
+      return str
+        .toLowerCase()
+        .replace(/\s+/g, ' ') // Normalize whitespace
+        .replace(/[^\w\s]/g, '') // Remove punctuation
+        .trim();
+    };
+
+    // Split search text into words for partial matching
+    const searchWords = normalizeText(highlightText).split(' ').filter(w => w.length > 2);
+    
     // Find and highlight the text
     const walker = document.createTreeWalker(
       container,
@@ -79,33 +91,123 @@ export default function DocumentPreview({ file, highlightText = "" }: DocumentPr
     }
 
     let firstMatch: HTMLElement | null = null;
+    const matches: Array<{ node: Text; start: number; length: number; score: number }> = [];
 
+    // First pass: collect all potential matches with scores
     textNodes.forEach((textNode) => {
       const text = textNode.textContent || '';
+      const normalizedText = normalizeText(text);
       const lowerText = text.toLowerCase();
       const lowerSearch = highlightText.toLowerCase();
       
+      // Strategy 1: Exact match (highest priority)
       if (lowerText.includes(lowerSearch)) {
         const index = lowerText.indexOf(lowerSearch);
-        const before = text.substring(0, index);
-        const match = text.substring(index, index + highlightText.length);
-        const after = text.substring(index + highlightText.length);
-
-        const fragment = document.createDocumentFragment();
-        
-        if (before) fragment.appendChild(document.createTextNode(before));
-        
-        const mark = document.createElement('mark');
-        mark.className = 'auto-highlight bg-yellow-300 px-1 rounded transition-all duration-300';
-        mark.textContent = match;
-        fragment.appendChild(mark);
-        
-        if (!firstMatch) firstMatch = mark;
-        
-        if (after) fragment.appendChild(document.createTextNode(after));
-
-        textNode.parentNode?.replaceChild(fragment, textNode);
+        matches.push({
+          node: textNode,
+          start: index,
+          length: highlightText.length,
+          score: 100
+        });
+        return;
       }
+
+      // Strategy 2: Normalized match (remove extra spaces and punctuation)
+      const normalizedSearch = normalizeText(highlightText);
+      if (normalizedText.includes(normalizedSearch)) {
+        // Find approximate position in original text
+        const words = text.toLowerCase().split(/\s+/);
+        const searchWordsLower = highlightText.toLowerCase().split(/\s+/);
+        
+        for (let i = 0; i <= words.length - searchWordsLower.length; i++) {
+          const segment = words.slice(i, i + searchWordsLower.length).join(' ');
+          if (normalizeText(segment) === normalizedSearch) {
+            const startPos = text.toLowerCase().indexOf(words[i]);
+            const endWord = words[i + searchWordsLower.length - 1];
+            const endPos = text.toLowerCase().lastIndexOf(endWord) + endWord.length;
+            
+            matches.push({
+              node: textNode,
+              start: startPos,
+              length: endPos - startPos,
+              score: 90
+            });
+            break;
+          }
+        }
+        return;
+      }
+
+      // Strategy 3: Partial word match (at least 70% of words present)
+      if (searchWords.length > 0) {
+        const matchedWords = searchWords.filter(word => normalizedText.includes(word));
+        const matchRatio = matchedWords.length / searchWords.length;
+        
+        if (matchRatio >= 0.7) {
+          // Find the span containing most matched words
+          const words = text.split(/\s+/);
+          let bestStart = 0;
+          let bestEnd = 0;
+          let bestScore = 0;
+
+          for (let i = 0; i < words.length; i++) {
+            for (let j = i + 1; j <= words.length; j++) {
+              const segment = words.slice(i, j).join(' ');
+              const segmentNorm = normalizeText(segment);
+              const segmentMatches = searchWords.filter(w => segmentNorm.includes(w));
+              const score = segmentMatches.length;
+              
+              if (score > bestScore) {
+                bestScore = score;
+                bestStart = i;
+                bestEnd = j;
+              }
+            }
+          }
+
+          if (bestScore > 0) {
+            const startText = words.slice(0, bestStart).join(' ');
+            const matchText = words.slice(bestStart, bestEnd).join(' ');
+            const startPos = startText.length + (startText.length > 0 ? 1 : 0);
+            
+            matches.push({
+              node: textNode,
+              start: startPos,
+              length: matchText.length,
+              score: matchRatio * 80
+            });
+          }
+        }
+      }
+    });
+
+    // Sort by score and highlight
+    matches.sort((a, b) => b.score - a.score);
+
+    matches.forEach((match, index) => {
+      const { node: textNode, start, length } = match;
+      const text = textNode.textContent || '';
+      
+      const before = text.substring(0, start);
+      const matchText = text.substring(start, start + length);
+      const after = text.substring(start + length);
+
+      const fragment = document.createDocumentFragment();
+      
+      if (before) fragment.appendChild(document.createTextNode(before));
+      
+      const mark = document.createElement('mark');
+      mark.className = `auto-highlight bg-yellow-300 px-1 rounded transition-all duration-300 ${
+        match.score < 100 ? 'opacity-80' : ''
+      }`;
+      mark.textContent = matchText;
+      fragment.appendChild(mark);
+      
+      if (index === 0) firstMatch = mark;
+      
+      if (after) fragment.appendChild(document.createTextNode(after));
+
+      textNode.parentNode?.replaceChild(fragment, textNode);
     });
 
     // Scroll to first match
