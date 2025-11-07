@@ -2,16 +2,11 @@
 
 import { Upload, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
 import { useState, useRef } from "react";
-import { validateFile } from "@/lib/utils";
-import { ApiResponse } from "@/lib/types";
+import { BatchApiResponse, FileData } from "@/lib/types";
 
 interface FileUploadProps {
-  onUploadSuccess: (data: {
-    parsed: ApiResponse["output_parsed"];
-    fileName: string;
-    file: File;
-  }) => void;
-  apiResponse: ApiResponse["output_parsed"] | null;
+  onUploadSuccess: (files: FileData[]) => void;
+  apiResponse: FileData[] | null;
   isApproved: boolean;
 }
 
@@ -22,16 +17,18 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
   const [isExporting, setIsExporting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (file: File | null) => {
-    if (!file) return;
+  const handleFileSelect = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
 
     setError(null);
     setSuccess(false);
 
-    // Validate file
-    const validation = validateFile(file);
-    if (!validation.valid) {
-      setError(validation.error || "Invalid file");
+    // Validate all files are .docx
+    const fileArray = Array.from(files);
+    const invalidFiles = fileArray.filter(f => !f.name.endsWith(".docx"));
+    
+    if (invalidFiles.length > 0) {
+      setError("Please upload only .docx files");
       return;
     }
 
@@ -39,10 +36,11 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
 
     try {
       const formData = new FormData();
-      formData.append("file", file);
-      formData.append("try_parse_json", "true");
+      fileArray.forEach(file => {
+        formData.append("files", file);
+      });
 
-      const response = await fetch("/api/analyze", {
+      const response = await fetch("/api/analyze-batch", {
         method: "POST",
         body: formData,
       });
@@ -51,15 +49,20 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
         throw new Error(`Upload failed: ${response.statusText}`);
       }
 
-      const data: ApiResponse = await response.json();
+      const data: BatchApiResponse = await response.json();
 
-      if (data.status === "success") {
+      if (data.status === "success" && data.results) {
         setSuccess(true);
-        onUploadSuccess({
-          parsed: data.output_parsed,
-          fileName: data.file_name,
-          file: file,
-        });
+        
+        // Map results to FileData with actual File objects
+        const filesData: FileData[] = data.results.map((result, index) => ({
+          file: fileArray[index],
+          fileName: result.file_name,
+          parsed: result.output_parsed,
+          runId: result.run_id,
+        }));
+
+        onUploadSuccess(filesData);
 
         // Clear success message after 3 seconds
         setTimeout(() => setSuccess(false), 3000);
@@ -67,7 +70,7 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
         throw new Error("Analysis failed");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to analyze document");
+      setError(err instanceof Error ? err.message : "Failed to analyze documents");
     } finally {
       setIsUploading(false);
     }
@@ -125,8 +128,8 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    handleFileSelect(file);
+    const files = e.dataTransfer.files;
+    handleFileSelect(files);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -139,7 +142,8 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
         ref={fileInputRef}
         type="file"
         accept=".docx"
-        onChange={(e) => handleFileSelect(e.target.files?.[0] || null)}
+        multiple
+        onChange={(e) => handleFileSelect(e.target.files)}
         className="hidden"
       />
 
@@ -169,7 +173,7 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
         ) : (
           <>
             <Upload size={20} />
-            <span>Upload Agreement</span>
+            <span>Upload Agreements</span>
           </>
         )}
       </button>

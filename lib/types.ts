@@ -6,6 +6,26 @@ export interface ApiResponse {
   output_parsed: OutputParsed;
 }
 
+export interface BatchApiResponse {
+  status: "success" | "error";
+  results: BatchResult[];
+}
+
+export interface BatchResult {
+  status: "success" | "error";
+  run_id: string;
+  file_name: string;
+  output_raw: string;
+  output_parsed: OutputParsed;
+}
+
+export interface FileData {
+  file: File;
+  fileName: string;
+  parsed: OutputParsed;
+  runId: string;
+}
+
 export interface OutputParsed {
   meta: DocumentMeta;
   review: ReviewField[];
