@@ -10,13 +10,11 @@ import { FileData } from "@/lib/types";
 export default function Home() {
   const [filesData, setFilesData] = useState<FileData[]>([]);
   const [activeFileIndex, setActiveFileIndex] = useState(0);
-  const [isApproved, setIsApproved] = useState(false);
   const [highlightText, setHighlightText] = useState<string>("");
 
   const handleUploadSuccess = (files: FileData[]) => {
     setFilesData(files);
     setActiveFileIndex(0);
-    setIsApproved(false);
     setHighlightText("");
   };
 
@@ -26,7 +24,6 @@ export default function Home() {
     
     if (newFiles.length === 0) {
       setActiveFileIndex(0);
-      setIsApproved(false);
     } else if (activeFileIndex >= newFiles.length) {
       setActiveFileIndex(newFiles.length - 1);
     }
@@ -34,6 +31,24 @@ export default function Home() {
 
   const handleHighlightRequest = (text: string) => {
     setHighlightText(text);
+  };
+
+  const handleApprove = () => {
+    const updatedFiles = [...filesData];
+    updatedFiles[activeFileIndex] = {
+      ...updatedFiles[activeFileIndex],
+      isApproved: true,
+    };
+    setFilesData(updatedFiles);
+  };
+
+  const handleReject = () => {
+    const updatedFiles = [...filesData];
+    updatedFiles[activeFileIndex] = {
+      ...updatedFiles[activeFileIndex],
+      isApproved: false,
+    };
+    setFilesData(updatedFiles);
   };
 
   const currentFile = filesData[activeFileIndex] || null;
@@ -46,7 +61,6 @@ export default function Home() {
           <FileUpload 
             onUploadSuccess={handleUploadSuccess}
             apiResponse={filesData}
-            isApproved={isApproved}
           />
           {filesData.length > 0 && (
             <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200">
@@ -85,9 +99,9 @@ export default function Home() {
         <div className="w-1/2">
           <ReviewInterface 
             data={currentFile?.parsed || null}
-            onApprove={() => setIsApproved(true)}
-            onReject={() => setIsApproved(false)}
-            isApproved={isApproved}
+            onApprove={handleApprove}
+            onReject={handleReject}
+            isApproved={currentFile?.isApproved || false}
             onHighlightRequest={handleHighlightRequest}
           />
         </div>

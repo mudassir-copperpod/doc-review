@@ -24,6 +24,7 @@ export interface FileData {
   fileName: string;
   parsed: OutputParsed;
   runId: string;
+  isApproved?: boolean;
 }
 
 export interface OutputParsed {

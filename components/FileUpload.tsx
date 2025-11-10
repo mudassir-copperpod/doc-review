@@ -7,10 +7,9 @@ import { BatchApiResponse, FileData } from "@/lib/types";
 interface FileUploadProps {
   onUploadSuccess: (files: FileData[]) => void;
   apiResponse: FileData[] | null;
-  isApproved: boolean;
 }
 
-export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }: FileUploadProps) {
+export default function FileUpload({ onUploadSuccess, apiResponse }: FileUploadProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -78,7 +77,15 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
 
   // Handle export
   const handleExport = async () => {
-    if (!apiResponse || !isApproved) {
+    if (!apiResponse) {
+      return;
+    }
+
+    // Filter only approved files
+    const approvedFiles = apiResponse.filter(file => file.isApproved === true);
+
+    if (approvedFiles.length === 0) {
+      setError("No approved files to export. Please approve at least one file.");
       return;
     }
 
@@ -92,7 +99,7 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          additionalProp1: apiResponse,
+          additionalProp1: approvedFiles,
         }),
       });
 
@@ -113,7 +120,7 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      alert("Excel report exported successfully!");
+      alert(`Excel report exported successfully! (${approvedFiles.length} approved file${approvedFiles.length > 1 ? 's' : ''})`);
     } catch (err) {
       console.error("Export error:", err);
       setError(err instanceof Error ? err.message : "Failed to export report");
@@ -178,16 +185,20 @@ export default function FileUpload({ onUploadSuccess, apiResponse, isApproved }:
         )}
       </button>
 
-      {/* Export Button - Only enabled when approved */}
+      {/* Export Button - Only enabled when there are approved files */}
       <button
         onClick={handleExport}
-        disabled={!isApproved || isExporting || !apiResponse}
+        disabled={isExporting || !apiResponse || apiResponse.filter(f => f.isApproved).length === 0}
         className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all flex items-center gap-2 ${
-          isApproved && apiResponse && !isExporting
+          apiResponse && apiResponse.filter(f => f.isApproved).length > 0 && !isExporting
             ? "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
             : "bg-gray-200 text-gray-400 cursor-not-allowed opacity-70 shadow-sm"
         }`}
-        title={!isApproved ? "Please approve the review before exporting" : "Export compliance report"}
+        title={
+          !apiResponse || apiResponse.filter(f => f.isApproved).length === 0
+            ? "Please approve at least one file before exporting"
+            : `Export ${apiResponse.filter(f => f.isApproved).length} approved file(s)`
+        }
       >
         {isExporting ? (
           <>
