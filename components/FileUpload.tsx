@@ -2,6 +2,7 @@
 
 import { Upload, Loader2, CheckCircle, AlertCircle, Download } from "lucide-react";
 import { useState, useRef } from "react";
+import toast from "react-hot-toast";
 import { BatchApiResponse, FileData } from "@/lib/types";
 
 interface FileUploadProps {
@@ -27,7 +28,9 @@ export default function FileUpload({ onUploadSuccess, apiResponse }: FileUploadP
     const invalidFiles = fileArray.filter(f => !f.name.endsWith(".docx"));
     
     if (invalidFiles.length > 0) {
-      setError("Please upload only .docx files");
+      const errorMessage = "Please upload only .docx files";
+      setError(errorMessage);
+      toast.error(errorMessage);
       return;
     }
 
@@ -53,15 +56,20 @@ export default function FileUpload({ onUploadSuccess, apiResponse }: FileUploadP
       if (data.status === "success" && data.results) {
         setSuccess(true);
         
-        // Map results to FileData with actual File objects
+        // Map results to FileData with actual File objects and complete batch result
         const filesData: FileData[] = data.results.map((result, index) => ({
           file: fileArray[index],
           fileName: result.file_name,
           parsed: result.output_parsed,
           runId: result.run_id,
+          batchResult: result, // Store complete batch result for export
         }));
 
         onUploadSuccess(filesData);
+        
+        toast.success(
+          `${fileArray.length} file${fileArray.length > 1 ? 's' : ''} analyzed successfully!`
+        );
 
         // Clear success message after 3 seconds
         setTimeout(() => setSuccess(false), 3000);
@@ -69,7 +77,9 @@ export default function FileUpload({ onUploadSuccess, apiResponse }: FileUploadP
         throw new Error("Analysis failed");
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to analyze documents");
+      const errorMessage = err instanceof Error ? err.message : "Failed to analyze documents";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsUploading(false);
     }
@@ -85,7 +95,9 @@ export default function FileUpload({ onUploadSuccess, apiResponse }: FileUploadP
     const approvedFiles = apiResponse.filter(file => file.isApproved === true);
 
     if (approvedFiles.length === 0) {
-      setError("No approved files to export. Please approve at least one file.");
+      const errorMessage = "No approved files to export. Please approve at least one file.";
+      setError(errorMessage);
+      toast.error(errorMessage);
       return;
     }
 
@@ -93,14 +105,20 @@ export default function FileUpload({ onUploadSuccess, apiResponse }: FileUploadP
     setError(null);
 
     try {
+      // Reconstruct the batch response format expected by the export API
+      const exportPayload = {
+        additionalProp1: {
+          status: "success",
+          results: approvedFiles.map(file => file.batchResult).filter(Boolean),
+        },
+      };
+
       const response = await fetch("/api/export", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          additionalProp1: approvedFiles,
-        }),
+        body: JSON.stringify(exportPayload),
       });
 
       if (!response.ok) {
@@ -120,10 +138,14 @@ export default function FileUpload({ onUploadSuccess, apiResponse }: FileUploadP
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
 
-      alert(`Excel report exported successfully! (${approvedFiles.length} approved file${approvedFiles.length > 1 ? 's' : ''})`);
+      toast.success(
+        `Excel report exported successfully! (${approvedFiles.length} approved file${approvedFiles.length > 1 ? 's' : ''})`
+      );
     } catch (err) {
       console.error("Export error:", err);
-      setError(err instanceof Error ? err.message : "Failed to export report");
+      const errorMessage = err instanceof Error ? err.message : "Failed to export report";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setIsExporting(false);
     }

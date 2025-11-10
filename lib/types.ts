@@ -25,6 +25,7 @@ export interface FileData {
   parsed: OutputParsed;
   runId: string;
   isApproved?: boolean;
+  batchResult?: BatchResult; // Store the complete batch result for export
 }
 
 export interface OutputParsed {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
-import { FileData } from "@/lib/types";
+import { BatchResult } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -14,7 +14,8 @@ export async function POST(request: NextRequest) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
       
       // Generate a proper Excel file from the approved files data
-      const approvedFiles = body.additionalProp1 || [];
+      const batchResponse = body.additionalProp1 || { results: [] };
+      const approvedResults = batchResponse.results || [];
       
       // Create workbook
       const workbook = XLSX.utils.book_new();
@@ -23,21 +24,21 @@ export async function POST(request: NextRequest) {
       const summaryData = [
         ["Compliance Report"],
         ["Generated:", new Date().toLocaleString()],
-        ["Total Files:", approvedFiles.length],
+        ["Total Files:", approvedResults.length],
         [],
         ["File Name", "Hotel Name", "Airline Name", "Airport Code", "Compliant Items", "Non-Compliant Items", "Total Items", "Compliance %"],
       ];
       
-      approvedFiles.forEach((fileData: FileData) => {
-        const meta = fileData.parsed.meta;
-        const review = fileData.parsed.review;
+      approvedResults.forEach((result: BatchResult) => {
+        const meta = result.output_parsed.meta;
+        const review = result.output_parsed.review;
         const compliant = review.filter((item) => item.compliant === "Y").length;
         const nonCompliant = review.filter((item) => item.compliant === "N").length;
         const total = review.length;
         const percentage = total > 0 ? ((compliant / total) * 100).toFixed(1) : "0";
         
         summaryData.push([
-          fileData.fileName,
+          result.file_name,
           meta.hotel_name,
           meta.airline_name,
           meta.station_or_airport_code,
@@ -52,9 +53,9 @@ export async function POST(request: NextRequest) {
       XLSX.utils.book_append_sheet(workbook, summarySheet, "Summary");
       
       // Create detailed sheets for each file
-      approvedFiles.forEach((fileData: FileData, index: number) => {
-        const meta = fileData.parsed.meta;
-        const review = fileData.parsed.review;
+      approvedResults.forEach((result: BatchResult, index: number) => {
+        const meta = result.output_parsed.meta;
+        const review = result.output_parsed.review;
         
         const detailData = [
           ["Document:", meta.document_title],

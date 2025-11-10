@@ -1,0 +1,207 @@
+{
+  "additionalProp1": {
+  "status": "success",
+  "results": [
+    {
+      "status": "success",
+      "run_id": "6911c1a4f5263f84c1a7c289",
+      "file_name": "Hotel-Airline Rate Agreement - Sample B.docx",
+      "output_raw": "{\n  \"meta\": {\n    \"document_title\": \"HOTEL CREW RATE AGREEMENT\",\n    \"station_or_airport_code\": \"QNM\",\n    \"hotel_name\": \"The Riverside Hotel, PQR\",\n    \"airline_name\": \"SkyFleet Airways, Inc.\"\n  },\n  \"review\": [\n    {\n      \"field\": \"Name (Parties)\",\n      \"actual_content\": \"This Agreement is made between The Riverside Hotel, PQR, located at 987 Lakeview Ave, PQR 560011 (the “Hotel”) and SkyFleet Airways, Inc., located at 2410 Horizon Park, Suite 400, Austin, Texas 78701 (the “Airline”). Aurora Travel Services Pvt. Ltd. (“Aurora”) has been engaged by the Airline as accommodations administrator to manage crew and employee lodging.\",\n      \"compliant\": \"Y\",\n      \"comment\": \"Full legal names and addresses for both hotel and airline are provided; Aurora is named as administrator.\"\n    },\n    {\n      \"field\": \"Start Date\",\n      \"actual_content\": \"The initial Term commences on April 1, 2022 and continues for twenty-four (24) months.\",\n      \"compliant\": \"Y\",\n      \"comment\": \"Explicit start date given as April 1, 2022.\"\n    },\n    {\n      \"field\": \"End Date\",\n      \"actual_content\": \"The initial Term commences on April 1, 2022 and continues for twenty-four (24) months. Thereafter the Agreement renews month-to-month.\",\n      \"compliant\": \"Y\",\n      \"comment\": \"End date is March 31, 2024, per 24-month term; then renews month-to-month.\"\n    },\n    {\n      \"field\": \"Room Capping\",\n      \"actual_content\": \"The quoted rate is based on a thirty-two (32) hour length of stay and is on a last-room-availability basis. No blackout dates shall apply to scheduled crew operations.\",\n      \"compliant\": \"Y\",\n      \"comment\": \"LRA (last-room-availability) is confirmed; no blackout dates; 32-hour stay window.\"\n    },\n    {\n      \"field\": \"Ad Hoc Rate\",\n      \"actual_content\": \"Upon availability, the Hotel shall extend preferential crew rates for Airline employees on leisure/corporate travel. Rates will be loaded in the GDS as follows: Worldspan: ZX 8120 Room Type Rate Type Rate Code LRA Close Out Occ. % Rate Total Tax Period ROH Crew/IROP CMA Yes 100 $102.00 12.0% 04/01/2022 - 03/31/2024\",\n      \"compliant\": \"Y\",\n      \"comment\": \"Preferential crew rates for ad hoc (IROP/leisure/corporate) are specified, subject to availability.\"\n    },\n    {\n      \"field\": \"Currency\",\n      \"actual_content\": \"Rate (USD)\",\n      \"compliant\": \"Y\",\n      \"comment\": \"Currency is explicitly stated as USD.\"\n    },\n    {\n      \"field\": \"Tax Rate and Exemption\",\n      \"actual_content\": \"Tax % Notes 04/01/2022 03/31/2024 102.00 12.0 LRA, no blackout; 32-hour length of stay\\nCrew room nights may qualify for tax exemptions as per applicable law. The Hotel shall invoice accurately and notify Aurora in writing of any tax changes prior to invoicing, including copies of ordinances or notices supporting any increase or decrease.\",\n      \"compliant\": \"Y\",\n      \"comment\": \"Tax rate is 12.0%. Exemption possible per law; hotel must notify Aurora of changes and provide documentation.\"\n    },\n    {\n      \"field\": \"Early Check-ins and Check-outs\",\n      \"actual_content\": \"Crew may check in immediately upon arrival and may check out up to the end of the length-of-stay window without additional charge, provided the total stay does not exceed the agreed length. The Hotel will not bill an extra night within this window.\",\n      \"compliant\": \"Y\",\n      \"comment\": \"Early/late check-in/out is allowed within the 32-hour window at no extra charge.\"\n    },\n    {\n      \"field\": \"Weekend/Special-Day Rates\",\n      \"actual_content\": \"The Hotel will provide rooms for the Airline at the rate(s) described in Schedule A, exclusive of applicable taxes and fees.\",\n      \"compliant\": \"N\",\n      \"comment\": \"No explicit mention of weekend or special-day rates; only a single rate is listed. Ambiguous if rates differ on weekends/holidays.\"\n    }\n  ],\n  \"snippets\": [\n    {\n      \"label\": \"Room Rate & Reservations\",\n      \"text\": \"The Hotel will provide rooms for the Airline at the rate(s) described in Schedule A, exclusive of applicable taxes and fees. The quoted rate is based on a thirty-two (32) hour length of stay and is on a last-room-availability basis. No blackout dates shall apply to scheduled crew operations.\",\n      \"page_or_section\": \"Section 1a\"\n    },\n    {\n      \"label\": \"Tax / Exemption\",\n      \"text\": \"Tax % Notes 04/01/2022 03/31/2024 102.00 12.0 LRA, no blackout; 32-hour length of stay\\nCrew room nights may qualify for tax exemptions as per applicable law. The Hotel shall invoice accurately and notify Aurora in writing of any tax changes prior to invoicing, including copies of ordinances or notices supporting any increase or decrease.\",\n      \"page_or_section\": \"Schedule A & Section 9\"\n    },\n    {\n      \"label\": \"Term (Start/End)\",\n      \"text\": \"The initial Term commences on April 1, 2022 and continues for twenty-four (24) months. Thereafter the Agreement renews month-to-month. During the initial Term, Aurora may terminate with thirty (30) days’ written notice; after the initial Term, either party may terminate with thirty (30) days’ written notice.\",\n      \"page_or_section\": \"Section 8\"\n    },\n    {\n      \"label\": \"Early/Late Check-in/out\",\n      \"text\": \"Crew may check in immediately upon arrival and may check out up to the end of the length-of-stay window without additional charge, provided the total stay does not exceed the agreed length. The Hotel will not bill an extra night within this window.\",\n      \"page_or_section\": \"Section 1b\"\n    }\n  ],\n  \"flags\": {\n    \"missing_fields\": [\n      \"Weekend/Special-Day Rates\"\n    ],\n    \"ambiguous_points\": [\n      \"No explicit statement whether weekend or special-day rates differ; only a single rate is listed. Confirmation needed if same rate applies for all days.\"\n    ]\n  }\n}",
+      "output_parsed": {
+        "meta": {
+          "document_title": "HOTEL CREW RATE AGREEMENT",
+          "station_or_airport_code": "QNM",
+          "hotel_name": "The Riverside Hotel, PQR",
+          "airline_name": "SkyFleet Airways, Inc."
+        },
+        "review": [
+          {
+            "field": "Name (Parties)",
+            "actual_content": "This Agreement is made between The Riverside Hotel, PQR, located at 987 Lakeview Ave, PQR 560011 (the “Hotel”) and SkyFleet Airways, Inc., located at 2410 Horizon Park, Suite 400, Austin, Texas 78701 (the “Airline”). Aurora Travel Services Pvt. Ltd. (“Aurora”) has been engaged by the Airline as accommodations administrator to manage crew and employee lodging.",
+            "compliant": "Y",
+            "comment": "Full legal names and addresses for both hotel and airline are provided; Aurora is named as administrator."
+          },
+          {
+            "field": "Start Date",
+            "actual_content": "The initial Term commences on April 1, 2022 and continues for twenty-four (24) months.",
+            "compliant": "Y",
+            "comment": "Explicit start date given as April 1, 2022."
+          },
+          {
+            "field": "End Date",
+            "actual_content": "The initial Term commences on April 1, 2022 and continues for twenty-four (24) months. Thereafter the Agreement renews month-to-month.",
+            "compliant": "Y",
+            "comment": "End date is March 31, 2024, per 24-month term; then renews month-to-month."
+          },
+          {
+            "field": "Room Capping",
+            "actual_content": "The quoted rate is based on a thirty-two (32) hour length of stay and is on a last-room-availability basis. No blackout dates shall apply to scheduled crew operations.",
+            "compliant": "Y",
+            "comment": "LRA (last-room-availability) is confirmed; no blackout dates; 32-hour stay window."
+          },
+          {
+            "field": "Ad Hoc Rate",
+            "actual_content": "Upon availability, the Hotel shall extend preferential crew rates for Airline employees on leisure/corporate travel. Rates will be loaded in the GDS as follows: Worldspan: ZX 8120 Room Type Rate Type Rate Code LRA Close Out Occ. % Rate Total Tax Period ROH Crew/IROP CMA Yes 100 $102.00 12.0% 04/01/2022 - 03/31/2024",
+            "compliant": "Y",
+            "comment": "Preferential crew rates for ad hoc (IROP/leisure/corporate) are specified, subject to availability."
+          },
+          {
+            "field": "Currency",
+            "actual_content": "Rate (USD)",
+            "compliant": "Y",
+            "comment": "Currency is explicitly stated as USD."
+          },
+          {
+            "field": "Tax Rate and Exemption",
+            "actual_content": "Tax % Notes 04/01/2022 03/31/2024 102.00 12.0 LRA, no blackout; 32-hour length of stay\nCrew room nights may qualify for tax exemptions as per applicable law. The Hotel shall invoice accurately and notify Aurora in writing of any tax changes prior to invoicing, including copies of ordinances or notices supporting any increase or decrease.",
+            "compliant": "Y",
+            "comment": "Tax rate is 12.0%. Exemption possible per law; hotel must notify Aurora of changes and provide documentation."
+          },
+          {
+            "field": "Early Check-ins and Check-outs",
+            "actual_content": "Crew may check in immediately upon arrival and may check out up to the end of the length-of-stay window without additional charge, provided the total stay does not exceed the agreed length. The Hotel will not bill an extra night within this window.",
+            "compliant": "Y",
+            "comment": "Early/late check-in/out is allowed within the 32-hour window at no extra charge."
+          },
+          {
+            "field": "Weekend/Special-Day Rates",
+            "actual_content": "The Hotel will provide rooms for the Airline at the rate(s) described in Schedule A, exclusive of applicable taxes and fees.",
+            "compliant": "N",
+            "comment": "No explicit mention of weekend or special-day rates; only a single rate is listed. Ambiguous if rates differ on weekends/holidays."
+          }
+        ],
+        "snippets": [
+          {
+            "label": "Room Rate & Reservations",
+            "text": "The Hotel will provide rooms for the Airline at the rate(s) described in Schedule A, exclusive of applicable taxes and fees. The quoted rate is based on a thirty-two (32) hour length of stay and is on a last-room-availability basis. No blackout dates shall apply to scheduled crew operations.",
+            "page_or_section": "Section 1a"
+          },
+          {
+            "label": "Tax / Exemption",
+            "text": "Tax % Notes 04/01/2022 03/31/2024 102.00 12.0 LRA, no blackout; 32-hour length of stay\nCrew room nights may qualify for tax exemptions as per applicable law. The Hotel shall invoice accurately and notify Aurora in writing of any tax changes prior to invoicing, including copies of ordinances or notices supporting any increase or decrease.",
+            "page_or_section": "Schedule A & Section 9"
+          },
+          {
+            "label": "Term (Start/End)",
+            "text": "The initial Term commences on April 1, 2022 and continues for twenty-four (24) months. Thereafter the Agreement renews month-to-month. During the initial Term, Aurora may terminate with thirty (30) days’ written notice; after the initial Term, either party may terminate with thirty (30) days’ written notice.",
+            "page_or_section": "Section 8"
+          },
+          {
+            "label": "Early/Late Check-in/out",
+            "text": "Crew may check in immediately upon arrival and may check out up to the end of the length-of-stay window without additional charge, provided the total stay does not exceed the agreed length. The Hotel will not bill an extra night within this window.",
+            "page_or_section": "Section 1b"
+          }
+        ],
+        "flags": {
+          "missing_fields": [
+            "Weekend/Special-Day Rates"
+          ],
+          "ambiguous_points": [
+            "No explicit statement whether weekend or special-day rates differ; only a single rate is listed. Confirmation needed if same rate applies for all days."
+          ]
+        }
+      },
+      "flat_rows": [
+        {
+          "run_id": "6911c1a4f5263f84c1a7c289",
+          "file_name": "Hotel-Airline Rate Agreement - Sample B.docx",
+          "timestamp": "2025-11-10 16:12:41",
+          "review": [
+            {
+              "field": "Name (Parties)",
+              "actual_content": "This Agreement is made between The Riverside Hotel, PQR, located at 987 Lakeview Ave, PQR 560011 (the “Hotel”) and SkyFleet Airways, Inc., located at 2410 Horizon Park, Suite 400, Austin, Texas 78701 (the “Airline”). Aurora Travel Services Pvt. Ltd. (“Aurora”) has been engaged by the Airline as accommodations administrator to manage crew and employee lodging.",
+              "compliant": "Y",
+              "comment": "Full legal names and addresses for both hotel and airline are provided; Aurora is named as administrator."
+            },
+            {
+              "field": "Start Date",
+              "actual_content": "The initial Term commences on April 1, 2022 and continues for twenty-four (24) months.",
+              "compliant": "Y",
+              "comment": "Explicit start date given as April 1, 2022."
+            },
+            {
+              "field": "End Date",
+              "actual_content": "The initial Term commences on April 1, 2022 and continues for twenty-four (24) months. Thereafter the Agreement renews month-to-month.",
+              "compliant": "Y",
+              "comment": "End date is March 31, 2024, per 24-month term; then renews month-to-month."
+            },
+            {
+              "field": "Room Capping",
+              "actual_content": "The quoted rate is based on a thirty-two (32) hour length of stay and is on a last-room-availability basis. No blackout dates shall apply to scheduled crew operations.",
+              "compliant": "Y",
+              "comment": "LRA (last-room-availability) is confirmed; no blackout dates; 32-hour stay window."
+            },
+            {
+              "field": "Ad Hoc Rate",
+              "actual_content": "Upon availability, the Hotel shall extend preferential crew rates for Airline employees on leisure/corporate travel. Rates will be loaded in the GDS as follows: Worldspan: ZX 8120 Room Type Rate Type Rate Code LRA Close Out Occ. % Rate Total Tax Period ROH Crew/IROP CMA Yes 100 $102.00 12.0% 04/01/2022 - 03/31/2024",
+              "compliant": "Y",
+              "comment": "Preferential crew rates for ad hoc (IROP/leisure/corporate) are specified, subject to availability."
+            },
+            {
+              "field": "Currency",
+              "actual_content": "Rate (USD)",
+              "compliant": "Y",
+              "comment": "Currency is explicitly stated as USD."
+            },
+            {
+              "field": "Tax Rate and Exemption",
+              "actual_content": "Tax % Notes 04/01/2022 03/31/2024 102.00 12.0 LRA, no blackout; 32-hour length of stay\nCrew room nights may qualify for tax exemptions as per applicable law. The Hotel shall invoice accurately and notify Aurora in writing of any tax changes prior to invoicing, including copies of ordinances or notices supporting any increase or decrease.",
+              "compliant": "Y",
+              "comment": "Tax rate is 12.0%. Exemption possible per law; hotel must notify Aurora of changes and provide documentation."
+            },
+            {
+              "field": "Early Check-ins and Check-outs",
+              "actual_content": "Crew may check in immediately upon arrival and may check out up to the end of the length-of-stay window without additional charge, provided the total stay does not exceed the agreed length. The Hotel will not bill an extra night within this window.",
+              "compliant": "Y",
+              "comment": "Early/late check-in/out is allowed within the 32-hour window at no extra charge."
+            },
+            {
+              "field": "Weekend/Special-Day Rates",
+              "actual_content": "The Hotel will provide rooms for the Airline at the rate(s) described in Schedule A, exclusive of applicable taxes and fees.",
+              "compliant": "N",
+              "comment": "No explicit mention of weekend or special-day rates; only a single rate is listed. Ambiguous if rates differ on weekends/holidays."
+            }
+          ],
+          "snippets": [
+            {
+              "label": "Room Rate & Reservations",
+              "text": "The Hotel will provide rooms for the Airline at the rate(s) described in Schedule A, exclusive of applicable taxes and fees. The quoted rate is based on a thirty-two (32) hour length of stay and is on a last-room-availability basis. No blackout dates shall apply to scheduled crew operations.",
+              "page_or_section": "Section 1a"
+            },
+            {
+              "label": "Tax / Exemption",
+              "text": "Tax % Notes 04/01/2022 03/31/2024 102.00 12.0 LRA, no blackout; 32-hour length of stay\nCrew room nights may qualify for tax exemptions as per applicable law. The Hotel shall invoice accurately and notify Aurora in writing of any tax changes prior to invoicing, including copies of ordinances or notices supporting any increase or decrease.",
+              "page_or_section": "Schedule A & Section 9"
+            },
+            {
+              "label": "Term (Start/End)",
+              "text": "The initial Term commences on April 1, 2022 and continues for twenty-four (24) months. Thereafter the Agreement renews month-to-month. During the initial Term, Aurora may terminate with thirty (30) days’ written notice; after the initial Term, either party may terminate with thirty (30) days’ written notice.",
+              "page_or_section": "Section 8"
+            },
+            {
+              "label": "Early/Late Check-in/out",
+              "text": "Crew may check in immediately upon arrival and may check out up to the end of the length-of-stay window without additional charge, provided the total stay does not exceed the agreed length. The Hotel will not bill an extra night within this window.",
+              "page_or_section": "Section 1b"
+            }
+          ],
+          "meta.document_title": "HOTEL CREW RATE AGREEMENT",
+          "meta.station_or_airport_code": "QNM",
+          "meta.hotel_name": "The Riverside Hotel, PQR",
+          "meta.airline_name": "SkyFleet Airways, Inc.",
+          "flags.missing_fields": [
+            "Weekend/Special-Day Rates"
+          ],
+          "flags.ambiguous_points": [
+            "No explicit statement whether weekend or special-day rates differ; only a single rate is listed. Confirmation needed if same rate applies for all days."
+          ]
+        }
+      ],
+      "meta": {
+        "timestamp": "2025-11-10 16:12:41",
+        "file_name": "Hotel-Airline Rate Agreement - Sample B.docx",
+        "run_id": "6911c1a4f5263f84c1a7c289"
+      }
+    }
+  ]
+}
+}
